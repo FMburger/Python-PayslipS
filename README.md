@@ -42,3 +42,4 @@ password = yourPWD
 log/payslip_sender.log
 ![log](img/log.png)
 
+### FAQ
