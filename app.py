@@ -1,3 +1,7 @@
-from controller import PayslipSenderController
+from flask import Flask
 
-payslip_sender = PayslipSenderController()
+app = Flask(__name__)
+
+
+if __name__ == '__main__':
+    app.run()
