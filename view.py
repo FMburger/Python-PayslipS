@@ -11,7 +11,7 @@ config.read('config.ini')
 class PayslipSenderView:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.iconbitmap('logo.ico')
+        self.root.iconbitmap('statics/logo.ico')
         self.root.title('薪 資 傳 送 者')
         width_value = self.root.winfo_screenwidth()
         height_value = self.root.winfo_screenheight()
