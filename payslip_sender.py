@@ -19,9 +19,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 login_manager.login_view = 'login'
 
 
@@ -90,9 +90,18 @@ def login():
 
 
 @app.route('/payslipSender')
-@login_required
 def payslip_sender():
-    return render_template('sender.html')
+    from controller import PayslipSenderController
+    controller = PayslipSenderController()
+    payPeriods = controller.default_payPeriod_list
+    departments = '所有部門'
+    employees = '所有員工'
+    return render_template(
+        'sender.html',
+        payPeriods=payPeriods,
+        departments=departments,
+        employees=employees
+    )
 
 
 @app.route('/myPayslip')

@@ -2,7 +2,7 @@ import conn2MSSQL
 from model import EmployeeListModel
 from model import EmailListModel
 from model import PayslipModel
-from view import PayslipSenderView
+# from view import PayslipSenderView
 import csv
 import tkinter as tk
 from tkinter import messagebox
@@ -34,7 +34,7 @@ logger = logging.getLogger()
 class PayslipSenderController:
     def __init__(self):
         # create view instance
-        self.view = PayslipSenderView()
+        # self.view = PayslipSenderView()
 
         # create database connection
         self.connection = conn2MSSQL.Connection(
@@ -53,32 +53,32 @@ class PayslipSenderController:
 
         # set default value
         self.add_item_to_combobox()
-        self.set_value_of_entry()
-        self.insert_text_to_textBox()
-        self.insert_data_into_treeview()
+        # self.set_value_of_entry()
+        # self.insert_text_to_textBox()
+        # self.insert_data_into_treeview()
 
         # create event handler
-        self.bind_function_to_combobox()
-        self.bind_function_to_btn_send()
-        self.bind_function_to_btn_smtp()
-        self.bind_function_to_btn_email_content()
+        # self.bind_function_to_combobox()
+        # self.bind_function_to_btn_send()
+        # self.bind_function_to_btn_smtp()
+        # self.bind_function_to_btn_email_content()
 
         # run Tkinter application
-        self.view.root.mainloop()
+        # self.view.root.mainloop()
 
 # cascading combobox
     def add_item_to_combobox(self):
-        list_payPeriods = self.model_employeeList.get_list_payPeriods()
-        self.view.cmb_payPeriod['values'] = list_payPeriods
-        self.view.cmb_payPeriod.set(list_payPeriods[0])
+        self.default_payPeriod_list = self.model_employeeList.get_list_payPeriods()
+        # self.view.cmb_payPeriod['values'] = list_payPeriods
+        # self.view.cmb_payPeriod.set(list_payPeriods[0])
 
-        list_departments = self.model_employeeList.get_list_departments(self.view.payPeriod.get())
-        self.view.cmb_department['values'] = list_departments
-        self.view.cmb_department.set('所有部門')
+        self.default_department_list = self.model_employeeList.get_list_departments(self.default_payPeriod_list[0])
+        # self.view.cmb_department['values'] = list_departments
+        # self.view.cmb_department.set('所有部門')
 
-        list_employees = self.model_employeeList.get_list_employees(self.view.payPeriod.get(), self.view.department.get())
-        self.view.cmb_employee['values'] = list_employees
-        self.view.cmb_employee.set('所有員工')
+        self.default_employee_list = self.model_employeeList.get_list_employees(self.default_payPeriod_list[0], '所有部門')
+        # self.view.cmb_employee['values'] = list_employees
+        # self.view.cmb_employee.set('所有員工')
 
     def bind_function_to_combobox(self):
         self.view.cmb_payPeriod.bind(

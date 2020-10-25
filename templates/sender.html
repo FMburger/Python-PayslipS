@@ -3,7 +3,41 @@
 {% block title %}Payslip Sender{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>payslip sender</h1>
+<h2>郵寄薪資條</h2>
+<div class="page-header " style="font-size:20px">
+    <label for="payPeriod">發薪期間:</label>
+    <select name="payPeriods" id="payPeriods">
+        {% for payPeriod in payPeriods %}
+            <option value="{{payPeriod}}">{{payPeriod}}</option>
+        {% endfor %}
+    </select>&nbsp
+    <label for="department">部門</label>
+    <select name="departments" id="departments">
+        {% if departments == '所有部門' %}
+            <option value={{departments}}>{{departments}}</option>
+        {% else %}
+            {% for department in departments %}
+                <option value="{{department}}">{{department}}</option>
+            {% endfor %}
+        {% endif %}
+            
+    </select>&nbsp
+    <label for="employee">員工編號</label>
+    <select name="employees" id="employees">
+        {% if employees == '所有員工' %}
+            <option value="{{employees}}">{{employees}}</option>
+        {% else %}
+            {% for employee in  employees %}
+                <option value="{{employee}}">{{employee}}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+    <input type="button" value="郵寄">
 </div>
+<div class="page-content">
+    <textarea readonly id="textarea" name="textarea" rows="4" cols="100%">
+        
+    </textarea>
+</div>
+    
 {% endblock %}
