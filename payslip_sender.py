@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, LoginManager, login_required, current_user, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -21,7 +22,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 login_manager.login_view = 'login'
 
 
@@ -89,19 +89,42 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/payslipSender')
-def payslip_sender():
+@app.route('/sender', methods=['GET', 'POST'])
+def sender():
     from controller import PayslipSenderController
     controller = PayslipSenderController()
-    payPeriods = controller.default_payPeriod_list
-    departments = '所有部門'
-    employees = '所有員工'
-    return render_template(
-        'sender.html',
-        payPeriods=payPeriods,
-        departments=departments,
-        employees=employees
-    )
+
+    if request.method == 'POST':
+        obj = request.get_json()
+        if obj['num'] == 1:
+            result = controller.model_employeeList.get_list_departments(
+                obj['payPeriod']
+            )
+        elif obj['num'] == 2:
+            result = controller.model_employeeList.get_list_employees(
+                obj['payPeriod'],
+                obj['department']
+            )
+        else:
+            pass
+
+        response = app.response_class(
+            response=json.dumps(result),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+    else:
+        # default value
+        payPeriods = controller.default_payPeriod_list
+        departments = controller.default_department_list
+        employees = controller.default_employee_list
+        return render_template(
+            'sender.html',
+            payPeriods=payPeriods,
+            departments=departments,
+            employees=employees
+        )
 
 
 @app.route('/myPayslip')

@@ -3,34 +3,105 @@
 {% block title %}Payslip Sender{% endblock %}
 
 {% block page_content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    function payPeriodChanged(){
+        var payPeriod = document.getElementById("payPeriods").value;
+        var department = document.getElementById("departments").value;
+        var myJson = JSON.stringify({ num: 1, payPeriod: payPeriod, department: department })
+        $.ajax({
+            url: "/sender",
+            type: "POST",
+            async: true, 
+            dataType:"json",
+            data: myJson,
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                $('#departments').empty();
+                $('#departments').append($('<option>所有部門</option>'));
+                for (x of data) {
+                    $('#departments').append("<option value='" + x + "'>" + x + "</option>");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
+            }
+        });
+        var myJson2 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department })
+        $.ajax({
+            url: "/sender",
+            type: "POST",
+            async: true, 
+            dataType:"json",
+            data: myJson2,
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                $('#employees').empty();
+                $('#employees').append($('<option>所有員工</option>'));
+                for (x of data) {
+                    $('#employees').append("<option value='" + x + "'>" + x + "</option>");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
+            }
+        });
+    }
+    function departmentChanged(){
+        var payPeriod = document.getElementById("payPeriods").value;
+        var department = document.getElementById("departments").value;
+        var myJson = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department })
+        $.ajax({
+            url: "/sender",
+            type: "POST",
+            async: true, 
+            dataType:"json",
+            data: myJson,
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                $('#employees').empty();
+                $('#employees').append($('<option>所有員工</option>'));
+                for (x of data) {
+                    $('#employees').append("<option value='" + x + "'>" + x + "</option>");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
+            }
+        });
+        
+    }
+    function employeeChanged(){
+    }
+</script>
 <h2>郵寄薪資條</h2>
 <div class="page-header " style="font-size:20px">
     <label for="payPeriod">發薪期間:</label>
-    <select name="payPeriods" id="payPeriods">
+    <select name="payPeriods" id="payPeriods"onchange="payPeriodChanged()">
         {% for payPeriod in payPeriods %}
             <option value="{{payPeriod}}">{{payPeriod}}</option>
         {% endfor %}
     </select>&nbsp
     <label for="department">部門</label>
-    <select name="departments" id="departments">
-        {% if departments == '所有部門' %}
-            <option value={{departments}}>{{departments}}</option>
-        {% else %}
-            {% for department in departments %}
-                <option value="{{department}}">{{department}}</option>
-            {% endfor %}
-        {% endif %}
-            
+    <select name="departments" id="departments" onchange="departmentChanged()">
+        <option value="所有部門">所有部門</option>
+        {% for department in departments %}
+            <option value="{{department}}" >{{department}}</option>
+        {% endfor %}
     </select>&nbsp
     <label for="employee">員工編號</label>
-    <select name="employees" id="employees">
-        {% if employees == '所有員工' %}
-            <option value="{{employees}}">{{employees}}</option>
-        {% else %}
-            {% for employee in  employees %}
-                <option value="{{employee}}">{{employee}}</option>
-            {% endfor %}
-        {% endif %}
+    <select name="employees" id="employees" onchange="employeeChanged()">
+        <option value="所有員工">所有員工</option>
+        {% for employee in  employees %}
+            <option value="{{employee}}">{{employee}}</option>
+        {% endfor %}
     </select>
     <input type="button" value="郵寄">
 </div>
