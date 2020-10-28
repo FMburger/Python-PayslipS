@@ -84,8 +84,6 @@
         var payPeriod = document.getElementById("payPeriods").value;
         var department = document.getElementById("departments").value;
         var employee = document.getElementById("employees").value;
-
-        //emailing
         var json4 = JSON.stringify({ num: 3, payPeriod: payPeriod, department: department, employee:employee });
         $.ajax({
             url: "/sender",

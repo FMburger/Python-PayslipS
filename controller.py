@@ -426,42 +426,32 @@ class FlaskController:
         self.default_department_list = self.model_employeeList.get_list_departments(self.default_payPeriod_list[0])
         self.default_employee_list = self.model_employeeList.get_list_employees(self.default_payPeriod_list[0], '所有部門')
 
-# send button
-    def btn_send_clicked(self):
-        self.view.txt_logging.config(state='normal')
-        self.view.txt_logging.insert(tk.INSERT, '\n------------------------------ 開始 ------------------------------')
-        self.email_payslip()
-
-    def email_payslip(self):
+    def email_payslip(self, payPeriod, department, employee):
+        log = '  開始執行'
         # check smtp connection
         try:
             serverSMTP = smtplib.SMTP(config['smtp']['server'], config['smtp']['port'])
             serverSMTP.starttls()
             serverSMTP.login(config['smtp']['id'], config['smtp']['pwd'])
         except:
-            connection_failed = 'SMTP Server 連線失敗。'
-            print(connection_failed)
-            logger.info(connection_failed)
-            self.view.txt_logging.insert(tk.INSERT, ('\n' + connection_failed))
+            smtp_status = '\nSMTP Server 連線失敗。'
+            print(smtp_status)
+            logger.info(smtp_status)
+            log += smtp_status
         else:
-            connection_success = 'SMTP Server 連線成功!'
-            print(connection_success)
-            logger.info(connection_success)
-            self.view.txt_logging.insert(tk.INSERT, '\n' + connection_success)
-
+            smtp_status = '\nSMTP Server 連線成功!'
+            print(smtp_status)
+            logger.info(smtp_status)
+            log += smtp_status
             # get list of employees
-            payPeriod = self.view.payPeriod.get()
-            department = self.view.department.get()
-            employee = self.view.employee.get()
             list_employees = self.model_payslip.create_list_employees(
                 payPeriod,
                 department,
                 employee
             )
-
             email_subject = payPeriod + '月份' + '薪資檔案'
-            email_body = self.view.txt_email_content.get('1.0', 'end-1c')
-
+            # email content
+            email_body = 'email content'
             for employee in list_employees:
                 self.create_payslip(payPeriod, employee)
                 employee = employee.rstrip()
@@ -500,10 +490,9 @@ class FlaskController:
                 if receiver_email.rstrip() == '':
                     msg = '員工' + employee + '無電子郵件資料, 請確實填寫'
                     messagebox.showwarning('小提醒', message=msg)
-                    noData = '員工' + employee + '無電子郵件資料, 因此檔案傳送失敗'
-                    print(noData)
-                    logger.info(noData)
-                    self.view.txt_logging.insert(tk.INSERT, '\n' + noData)
+                    emaildata = '員工' + employee + '無電子郵件資料, 因此檔案傳送失敗'
+                    print(emaildata)
+                    logger.info(emaildata)
                 else:
                     # Check whether email send success or not
                     try:
@@ -514,19 +503,19 @@ class FlaskController:
                             text
                         )
                     except:
-                        delivery_failed = '電子郵件傳送失敗。'
-                        print(delivery_failed)
-                        logger.info(delivery_failed)
-                        self.view.txt_logging.insert(tk.INSERT, delivery_failed)
+                        delivery_status = '\n電子郵件傳送失敗。'
+                        print(delivery_status)
+                        logger.info(delivery_status)
+                        log += delivery_status
                     else:
-                        deliverey_success = '電子郵件傳送成功。'
-                        print(deliverey_success)
-                        logger.info(deliverey_success)
-                        self.view.txt_logging.insert(tk.INSERT, deliverey_success)
+                        delivery_status = '\n電子郵件傳送成功。\n'
+                        print(delivery_status)
+                        logger.info(delivery_status)
+                        log += delivery_status
         finally:
             serverSMTP.quit()
-            self.view.txt_logging.insert(tk.INSERT, '\n------------------------------ 結束 ------------------------------')
-            self.view.txt_logging.config(state='disable')
+            log += '結束'
+            return log
 
     def create_payslip(self, payPeriod, employee):
         profile = self.model_payslip.get_profile(employee)

@@ -106,8 +106,7 @@ def sender():
                 obj['department']
             )
         elif obj['num'] == 3:
-            result = 'test'
-
+            result = controller.email_payslip(obj['payPeriod'], obj['department'], obj['employee'])
         response = app.response_class(
             response=json.dumps(result),
             status=200,
