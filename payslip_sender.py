@@ -91,8 +91,8 @@ def login():
 
 @app.route('/sender', methods=['GET', 'POST'])
 def sender():
-    from controller import PayslipSenderController
-    controller = PayslipSenderController()
+    from controller import FlaskController
+    controller = FlaskController()
 
     if request.method == 'POST':
         obj = request.get_json()
