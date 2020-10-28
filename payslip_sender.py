@@ -105,8 +105,8 @@ def sender():
                 obj['payPeriod'],
                 obj['department']
             )
-        else:
-            pass
+        elif obj['num'] == 3:
+            result = 'test'
 
         response = app.response_class(
             response=json.dumps(result),

@@ -9,13 +9,13 @@
     function payPeriodChanged(){
         var payPeriod = document.getElementById("payPeriods").value;
         var department = document.getElementById("departments").value;
-        var myJson = JSON.stringify({ num: 1, payPeriod: payPeriod, department: department })
+        var json1 = JSON.stringify({ num: 1, payPeriod: payPeriod, department: department });
         $.ajax({
             url: "/sender",
             type: "POST",
             async: true, 
             dataType:"json",
-            data: myJson,
+            data: json1,
             contentType: "application/json;charset=utf-8",
             success: function (data) {
                 $('#departments').empty();
@@ -30,13 +30,13 @@
                 alert(textStatus);
             }
         });
-        var myJson2 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department })
+        var json2 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department });
         $.ajax({
             url: "/sender",
             type: "POST",
             async: true, 
             dataType:"json",
-            data: myJson2,
+            data: json2,
             contentType: "application/json;charset=utf-8",
             success: function (data) {
                 $('#employees').empty();
@@ -55,13 +55,13 @@
     function departmentChanged(){
         var payPeriod = document.getElementById("payPeriods").value;
         var department = document.getElementById("departments").value;
-        var myJson = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department })
+        var json3 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department })
         $.ajax({
             url: "/sender",
             type: "POST",
             async: true, 
             dataType:"json",
-            data: myJson,
+            data: json3,
             contentType: "application/json;charset=utf-8",
             success: function (data) {
                 $('#employees').empty();
@@ -79,6 +79,33 @@
         
     }
     function employeeChanged(){
+    }
+    function btnClicked(){
+        var payPeriod = document.getElementById("payPeriods").value;
+        var department = document.getElementById("departments").value;
+        var employee = document.getElementById("employees").value;
+
+        //emailing
+        var json4 = JSON.stringify({ num: 3, payPeriod: payPeriod, department: department, employee:employee });
+        $.ajax({
+            url: "/sender",
+            type: "POST",
+            async: true, 
+            dataType:"json",
+            data: json4,
+            contentType: "application/json;charset=utf-8",
+            success: function (text) {
+                document.getElementById("textarea").readOnly = false;
+                document.getElementById("textarea").value = document.getElementById("textarea").value + text + '\n' ;
+                document.getElementById("textarea").readOnly = true;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
+            }
+        });
+        
     }
 </script>
 <h2>郵寄薪資條</h2>
@@ -103,7 +130,7 @@
             <option value="{{employee}}">{{employee}}</option>
         {% endfor %}
     </select>
-    <input type="button" value="郵寄">
+    <input type="button" value="郵寄" onclick="btnClicked()">
 </div>
 <div class="page-content">
     <textarea readonly id="textarea" name="textarea" rows="4" cols="100%">
