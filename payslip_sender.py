@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, url_for, redirect
 from flask_bootstrap import Bootstrap
 from forms import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, LoginManager, login_required, current_user, UserMixin
+from flask_login import login_user, logout_user, login_required,  LoginManager,  current_user, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -89,6 +89,12 @@ def login():
         flash('Invalid email or password.')
     return render_template('login.html', form=form)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('index'))
 
 @app.route('/sender', methods=['GET', 'POST'])
 @login_required
