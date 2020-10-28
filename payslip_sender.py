@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, flash, url_for
+from flask import Flask, render_template, request, flash, url_for, redirect
 from flask_bootstrap import Bootstrap
 from forms import LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] =\
     '\x0f[kH\xf0*n\xcao\xb08\x86\x08$\xcf\xf5P>\xf7\xb5\xb9\xb0\x1c\xa4'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
-    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    'sqlite:///' + os.path.join(basedir, 'user.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 bootstrap = Bootstrap(app)
@@ -84,12 +84,14 @@ def login():
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('index')
+                print('test2')
             return redirect(next)
         flash('Invalid email or password.')
     return render_template('login.html', form=form)
 
 
 @app.route('/sender', methods=['GET', 'POST'])
+@login_required
 def sender():
     from controller import FlaskController
     controller = FlaskController()
