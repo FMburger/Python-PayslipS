@@ -1,7 +1,7 @@
 import conn2MSSQL
-from model import EmployeeListModel
-from model import EmailListModel
-from model import PayslipModel
+from models import EmployeeListModel
+from models import EmailListModel
+from models import PayslipModel
 from view import PayslipSenderView
 import csv
 import tkinter as tk
