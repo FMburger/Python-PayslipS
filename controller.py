@@ -68,15 +68,15 @@ class TkinterController:
 
 # cascading combobox
     def add_item_to_combobox(self):
-        self.default_payPeriod_list = self.model_employeeList.get_list_payPeriods()
+        list_payPeriods = self.model_employeeList.get_list_payPeriods()
         self.view.cmb_payPeriod['values'] = list_payPeriods
         self.view.cmb_payPeriod.set(list_payPeriods[0])
 
-        self.default_department_list = self.model_employeeList.get_list_departments(self.default_payPeriod_list[0])
+        list_departments = self.model_employeeList.get_list_departments(list_payPeriods[0])
         self.view.cmb_department['values'] = list_departments
         self.view.cmb_department.set('所有部門')
 
-        self.default_employee_list = self.model_employeeList.get_list_employees(self.default_payPeriod_list[0], '所有部門')
+        list_employees = self.model_employeeList.get_list_employees(list_payPeriods[0], '所有部門')
         self.view.cmb_employee['values'] = list_employees
         self.view.cmb_employee.set('所有員工')
 
