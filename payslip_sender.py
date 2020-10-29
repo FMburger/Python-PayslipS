@@ -7,6 +7,11 @@ from flask_login import login_user, logout_user, login_required,  LoginManager, 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
+import configparser
+
+# config.init
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -84,7 +89,6 @@ def login():
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
                 next = url_for('index')
-                print('test2')
             return redirect(next)
         flash('Invalid email or password.')
     return render_template('login.html', form=form)
@@ -139,6 +143,34 @@ def sender():
 def my_payslip():
     return render_template('my_payslip.html')
 
+@app.route('/setting', methods=['GET', 'POST'])
+@login_required
+def setting():
+    if request.method == 'POST':
+        obj = request.get_json()
+        config['smtp']['server'] = obj['smtpServer']
+        config['smtp']['port'] = obj['port']
+        config['smtp']['id'] = obj['id']
+        config['smtp']['pwd'] = obj['password']
+        config['smtp']['emailContent'] = obj['emailContent']
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        result = 'Success'
+        response = app.response_class(
+            response=json.dumps(result),
+            status=200,
+            mimetype='application/json'
+        )
+        return response
+    else:
+        return render_template(
+            'setting.html',
+            server = config['smtp']['server'],
+            port = config['smtp']['port'],
+            id = config['smtp']['id'],
+            password = config['smtp']['pwd'],
+            emailContent = config['smtp']['emailContent']
+        )
 
 if __name__ == '__main__':
     app.run()
