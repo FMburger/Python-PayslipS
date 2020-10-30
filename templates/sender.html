@@ -10,6 +10,7 @@
         var payPeriod = document.getElementById("payPeriods").value;
         var department = document.getElementById("departments").value;
         var json1 = JSON.stringify({ num: 1, payPeriod: payPeriod, department: department });
+        var json2 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department });
         $.ajax({
             url: "/sender",
             type: "POST",
@@ -30,7 +31,6 @@
                 alert(textStatus);
             }
         });
-        var json2 = JSON.stringify({ num: 2, payPeriod: payPeriod, department: department });
         $.ajax({
             url: "/sender",
             type: "POST",

@@ -8,6 +8,7 @@ class Connection:
 
     def create_connection(self, server, database, userID, password):
         try:
+            # Download ODBC Driver 13 (https://www.microsoft.com/en-us/download/details.aspx?id=50420)
             cnxn = pyodbc.connect(
                 'DRIVER={ODBC Driver 13 for SQL Server};SERVER=' +
                 server +

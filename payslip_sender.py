@@ -155,7 +155,7 @@ def setting():
         config['smtp']['emailContent'] = obj['emailContent']
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
-        result = 'Success'
+        result = '儲存成功'
         response = app.response_class(
             response=json.dumps(result),
             status=200,

@@ -451,7 +451,7 @@ class FlaskController:
             )
             email_subject = payPeriod + '月份' + '薪資檔案'
             # email content
-            email_body = 'email content'
+            email_body = config['smtp']['emailContent']
             for employee in list_employees:
                 self.create_payslip(payPeriod, employee)
                 employee = employee.rstrip()
@@ -508,13 +508,13 @@ class FlaskController:
                         logger.info(delivery_status)
                         log += delivery_status
                     else:
-                        delivery_status = '\n電子郵件傳送成功。\n'
+                        delivery_status = '\n電子郵件傳送成功。'
                         print(delivery_status)
                         logger.info(delivery_status)
                         log += delivery_status
         finally:
             serverSMTP.quit()
-            log += '結束'
+            log += '\n結束'
             return log
 
     def create_payslip(self, payPeriod, employee):
