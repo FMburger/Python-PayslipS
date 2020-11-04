@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Payslip Sender{% endblock %}
+{% block title %}Sender{% endblock %}
 
-{% block page_content %}
+{% block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <script>
     function payPeriodChanged(){
         var payPeriod = document.getElementById("payPeriods").value;
@@ -106,6 +105,9 @@
         
     }
 </script>
+{% endblock %}
+
+{% block page_content %}
 <h2>郵寄薪資條</h2>
 <div class="page-header " style="font-size:20px">
     <label for="payPeriod">發薪期間:</label>

@@ -148,11 +148,11 @@ def my_payslip():
 def setting():
     if request.method == 'POST':
         obj = request.get_json()
-        config['smtp']['server'] = obj['smtpServer']
-        config['smtp']['port'] = obj['port']
-        config['smtp']['id'] = obj['id']
-        config['smtp']['pwd'] = obj['password']
-        config['smtp']['emailContent'] = obj['emailContent']
+        config['smtp']['smtp_host'] = obj['smtpServer']
+        config['smtp']['smtp_port'] = obj['port']
+        config['smtp']['user_name'] = obj['id']
+        config['smtp']['user_password'] = obj['password']
+        config['email']['email_content'] = obj['email_content']
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
         result = '儲存成功'
@@ -165,11 +165,11 @@ def setting():
     else:
         return render_template(
             'setting.html',
-            server = config['smtp']['server'],
-            port = config['smtp']['port'],
-            id = config['smtp']['id'],
-            password = config['smtp']['pwd'],
-            emailContent = config['smtp']['emailContent']
+            server = config['smtp']['smtp_host'],
+            port = config['smtp']['smtp_port'],
+            id = config['smtp']['user_name'],
+            password = config['smtp']['user_password'],
+            emailContent = config['email']['email_content']
         )
 
 if __name__ == '__main__':
