@@ -1,7 +1,5 @@
 import conn2MSSQL
-from models import EmployeeListModel
-from models import EmailListModel
-from models import PayslipModel
+import models
 from view import PayslipSenderView
 import csv
 import tkinter as tk
@@ -47,9 +45,9 @@ class TkinterController:
         logger.info(self.connection.connectionInfo)
 
         # create model instance
-        self.model_employeeList = EmployeeListModel(self.conn)
-        self.model_emailList = EmailListModel(self.conn)
-        self.model_payslip = PayslipModel(self.conn)
+        self.model_employeeList = models.EmployeeListModel(self.conn)
+        self.model_emailList = models.EmailListModel(self.conn)
+        self.model_payslip = models.PayslipModel(self.conn)
 
         # set default value
         self.add_item_to_combobox()
@@ -417,9 +415,9 @@ class FlaskController:
         logger.info(self.connection.connectionInfo)
 
         # create model instance
-        self.model_employeeList = EmployeeListModel(self.conn)
-        self.model_emailList = EmailListModel(self.conn)
-        self.model_payslip = PayslipModel(self.conn)
+        self.model_employeeList = models.EmployeeListModel(self.conn)
+        self.model_emailList = models.EmailListModel(self.conn)
+        self.model_payslip = models.PayslipModel(self.conn)
 
         # set default value
         self.default_payPeriod_list = self.model_employeeList.get_list_payPeriods()
