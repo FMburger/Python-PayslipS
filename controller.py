@@ -36,10 +36,10 @@ class TkinterController:
 
         # create database connection
         self.connection = conn2MSSQL.Connection(
-            config['database']['server'],
+            config['database']['server_name'],
             config['database']['database'],
-            config['database']['username'],
-            config['database']['password']
+            config['database']['user_name'],
+            config['database']['user_password']
         )
         self.conn = self.connection.conn
         logger.info(self.connection.connectionInfo)
@@ -134,9 +134,9 @@ class TkinterController:
     def email_payslip(self):
         # check smtp connection
         try:
-            serverSMTP = smtplib.SMTP(config['smtp']['server'], config['smtp']['port'])
+            serverSMTP = smtplib.SMTP(config['smtp']['smtp_host'], config['smtp']['smtp_port'])
             serverSMTP.starttls()
-            serverSMTP.login(config['smtp']['id'], config['smtp']['pwd'])
+            serverSMTP.login(config['smtp']['user_name'], config['smtp']['user_password'])
         except:
             connection_failed = 'SMTP Server 連線失敗。'
             print(connection_failed)
@@ -167,7 +167,7 @@ class TkinterController:
                 email = self.model_payslip.get_email(employee)
                 str_email = email.to_string(index=False, header=False)
                 # Email header
-                sender_email = config['smtp']['id']
+                sender_email = config['smtp']['user_name']
                 receiver_email = str_email
                 msg = MIMEMultipart()
                 msg['From'] = sender_email
@@ -336,10 +336,10 @@ class TkinterController:
 
 # smtp server
     def set_value_of_entry(self):
-        self.view.value_smtpserver.set(config['smtp']['server'])
-        self.view.value_port.set(config['smtp']['port'])
-        self.view.value_id.set(config['smtp']['id'])
-        self.view.value_pwd.set(config['smtp']['pwd'])
+        self.view.value_smtpserver.set(config['smtp']['smtp_host'])
+        self.view.value_port.set(config['smtp']['smtp_port'])
+        self.view.value_id.set(config['smtp']['user_name'])
+        self.view.value_pwd.set(config['smtp']['user_password'])
         self.view.entry_smtpserver.config(state='disabled')
         self.view.entry_port.config(state='disabled')
         self.view.entry_id.config(state='disabled')
@@ -356,10 +356,10 @@ class TkinterController:
         self.view.entry_pwd.config(state='normal')
 
     def save_smtp(self):
-        config['smtp']['server'] = self.view.entry_smtpserver.get()
-        config['smtp']['port'] = self.view.entry_port.get()
-        config['smtp']['id'] = self.view.entry_id.get()
-        config['smtp']['pwd'] = self.view.entry_pwd.get()
+        config['smtp']['smtp_host'] = self.view.entry_smtpserver.get()
+        config['smtp']['smtp_port'] = self.view.entry_port.get()
+        config['smtp']['user_name'] = self.view.entry_id.get()
+        config['smtp']['user_password'] = self.view.entry_pwd.get()
         self.view.entry_smtpserver.config(state='disabled')
         self.view.entry_port.config(state='disabled')
         self.view.entry_id.config(state='disabled')
@@ -406,10 +406,10 @@ class FlaskController:
     def __init__(self):
         # create database connection
         self.connection = conn2MSSQL.Connection(
-            config['database']['server'],
+            config['database']['server_name'],
             config['database']['database'],
-            config['database']['username'],
-            config['database']['password']
+            config['database']['user_name'],
+            config['database']['user_password']
         )
         self.conn = self.connection.conn
         logger.info(self.connection.connectionInfo)
@@ -428,9 +428,9 @@ class FlaskController:
         log = '  開始執行'
         # check smtp connection
         try:
-            serverSMTP = smtplib.SMTP(config['smtp']['server'], config['smtp']['port'])
+            serverSMTP = smtplib.SMTP(config['smtp']['smtp_host'], config['smtp']['smtp_port'])
             serverSMTP.starttls()
-            serverSMTP.login(config['smtp']['id'], config['smtp']['pwd'])
+            serverSMTP.login(config['smtp']['user_name'], config['smtp']['user_password'])
         except:
             smtp_status = '\nSMTP Server 連線失敗。'
             print(smtp_status)
@@ -449,14 +449,14 @@ class FlaskController:
             )
             email_subject = payPeriod + '月份' + '薪資檔案'
             # email content
-            email_body = config['smtp']['emailContent']
+            email_body = config['email']['email_content']
             for employee in list_employees:
                 self.create_payslip(payPeriod, employee)
                 employee = employee.rstrip()
                 email = self.model_payslip.get_email(employee)
                 str_email = email.to_string(index=False, header=False)
                 # Email header
-                sender_email = config['smtp']['id']
+                sender_email = config['smtp']['user_name']
                 receiver_email = str_email
                 msg = MIMEMultipart()
                 msg['From'] = sender_email
