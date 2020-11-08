@@ -105,8 +105,8 @@ def logout():
 @app.route('/sender', methods=['GET', 'POST'])
 @login_required
 def sender():
-    from controllers import flaskController
-    controller = flaskController.Controller()
+    import controller
+    controller = controller.Controller()
 
     if request.method == 'POST':
         obj = request.get_json()
