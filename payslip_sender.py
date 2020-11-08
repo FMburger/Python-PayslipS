@@ -93,12 +93,14 @@ def login():
         flash('Invalid email or password.')
     return render_template('login.html', form=form)
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('You have been logged out.')
     return redirect(url_for('index'))
+
 
 @app.route('/sender', methods=['GET', 'POST'])
 @login_required
@@ -143,6 +145,7 @@ def sender():
 def my_payslip():
     return render_template('my_payslip.html')
 
+
 @app.route('/setting', methods=['GET', 'POST'])
 @login_required
 def setting():
@@ -165,12 +168,13 @@ def setting():
     else:
         return render_template(
             'setting.html',
-            server = config['smtp']['smtp_host'],
-            port = config['smtp']['smtp_port'],
-            id = config['smtp']['user_name'],
-            password = config['smtp']['user_password'],
-            emailContent = config['email']['email_content']
+            server=config['smtp']['smtp_host'],
+            port=config['smtp']['smtp_port'],
+            id=config['smtp']['user_name'],
+            password=config['smtp']['user_password'],
+            emailContent=config['email']['email_content']
         )
+
 
 if __name__ == '__main__':
     app.run()
