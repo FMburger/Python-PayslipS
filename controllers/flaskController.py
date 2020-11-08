@@ -147,27 +147,32 @@ class Controller:
         paltj = self.model_payslip.get_paltj(payPeriod, employee)
         list_paltj = paltj.values.tolist()
 
-        # 判斷津貼扣款項目正負值
+        # 下面這段程式碼會先建立一個 10 * 3 的二維陣列 list1, 10 列中的每一列都會有 3 個元素, 每個元素分別代表[項目名稱, 項目金額, 正負值]
+        # 接下來使用一個迴圈將 list_paltj 的值帶入 list1 中, 這個步驟是為了讓 list_paltj 的項目在小於 10 比的狀況下仍能正常顯示
         positive = 0
         negative = 0
         list1 = [['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1]]
         for i in range(len(list_paltj)):
-            if list_paltj[i][0] == '':
-                pass
-            else:
+            if list_paltj[i][0] != '':
                 list1[i][0] = list_paltj[i][0]
                 list1[i][1] = list_paltj[i][1]
                 if list_paltj[i][2] < 0:
                     list1[i][2] = -1
-                    negative = negative + (list1[i][1] * list_paltj[i][2])
+                    negative += (list1[i][1] * list_paltj[i][2])
                 else:
-                    positive = positive + list1[i][1]
+                    positive += list1[i][1]
+
         year = payPeriod[0:4]
         month = payPeriod[4:6]
 
         # add variables into the templates context
         env = Environment(loader=FileSystemLoader('.'))
         template = env.get_template('payslip.html')
+
+        # 薪資條的加扣項:
+        # item1 ~ item7 為固定的薪資項目, 其項目數量和金額的正負值是不變的
+        # item8 ~ item27 為其他津貼扣款項目, 其項目的名稱、數量和金額的正負值都是變動的 (不同的員工, 項目也會也所不同)
+        # item28 ~ item35 為出勤明細及相關金額總和
         template_vars = {
             'payDate': (year + '/' + str(int(month) + 1) + '/' + '01'),
             'payPeriod': (year + '/' + month + '/01-' + year + '/' + month + '/30'),
