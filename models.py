@@ -12,12 +12,10 @@ class EmployeeListModel:
             'FROM PALTI ' +
             'ORDER BY \'TI002\' DESC'
         )
-        df_employeeList = pd.read_sql(query_employeeList, self.conn)
-        return df_employeeList
+        return pd.read_sql(query_employeeList, self.conn)
 
     def get_list_payPeriods(self):
-        list_payPeriods = self.employeeList[self.employeeList.columns[0]].unique().tolist()
-        return list_payPeriods
+        return self.employeeList[self.employeeList.columns[0]].unique().tolist()
 
     def get_list_departments(self, payPeriod):
         df_departments = self.employeeList.query(
@@ -90,8 +88,7 @@ class PayslipModel:
                 'ORDER BY \'TI001\' ASC'
             )
         df_employees = pd.read_sql(query_employees, self.conn)
-        list_employees = df_employees['TI001'].tolist()
-        return list_employees
+        return df_employees['TI001'].tolist()
 
     def get_profile(self, employee):
         query_profile = (
@@ -102,8 +99,7 @@ class PayslipModel:
             '\' ' +
             'ORDER BY \'MV001\' DESC'
             )
-        df_profile = pd.read_sql(query_profile, self.conn)
-        return df_profile
+        return pd.read_sql(query_profile, self.conn)
 
     def get_palti(self, payPeriod, employee):
         query_palti = (
@@ -136,8 +132,7 @@ class PayslipModel:
                 payPeriod +
                 ' ORDER BY \'員工編號\' ASC'
             )
-        df_palti = pd.read_sql(query_palti, self.conn)
-        return df_palti
+        return pd.read_sql(query_palti, self.conn)
 
     def get_paltj(self, payPeriod, employee):
         query_paltj = (
@@ -152,8 +147,7 @@ class PayslipModel:
             'AND TJ002 = ' +
             payPeriod
         )
-        df_paltj = pd.read_sql(query_paltj, self.conn)
-        return df_paltj
+        return pd.read_sql(query_paltj, self.conn)
 
     def get_email(self, employee):
         query_email = (
@@ -165,8 +159,7 @@ class PayslipModel:
             '\' ' +
             'ORDER BY MV001 ASC'
         )
-        df_email = pd.read_sql(query_email, self.conn)
-        return df_email
+        return pd.read_sql(query_email, self.conn)
 
 
 class EmailListModel:
@@ -182,5 +175,4 @@ class EmailListModel:
             'ORDER BY \'MV001\' DESC'
         )
         df_emailList = pd.read_sql(query_emailList, self.conn)
-        list_emailList = df_emailList.values.tolist()
-        return list_emailList
+        return df_emailList.values.tolist()
