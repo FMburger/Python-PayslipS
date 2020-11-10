@@ -134,106 +134,19 @@
                                 </td>
                                 <td></td>
                             </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item8}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item9}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item10}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item11}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item12}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item13}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item14}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item15}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item16}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item17}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item18}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item19}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item20}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item21}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item22}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item23}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item24}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item25}}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td >
-                                    {{item26}}
-                                </td>
-                                <td style="font-family: 'Roboto', sans-serif;" >
-                                    {{item27}}
-                                </td>
-                                <td></td>
-                            </tr>
+                            <!-- 加扣款項目 -->
+                            {% for key, value in item8.items()  %}
+                                <tr>
+                                    <td></td>
+                                    <td >
+                                        {{value['津貼扣款名稱']}}
+                                    </td>
+                                    <td style="font-family: 'Roboto', sans-serif;" >
+                                        {{value['津貼扣款金額'] * value['加扣項']}}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
                             <tr>
                                 <td>出勤</td>
                                 <td></td>
@@ -243,7 +156,7 @@
                                 <td></td>
                                 <td>出勤天數</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item28}}
+                                    {{item9}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -251,7 +164,7 @@
                                 <td></td>
                                 <td>加班時數</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item29}}
+                                    {{item10}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -264,7 +177,7 @@
                                 <td></td>
                                 <td>公司提繳</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item30}}
+                                    {{item11}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -272,7 +185,7 @@
                                 <td></td>
                                 <td>津貼合計</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item31}}
+                                    {{item12}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -280,7 +193,7 @@
                                 <td></td>
                                 <td>扣款合計</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item32}}
+                                    {{item13}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -288,7 +201,7 @@
                                 <td></td>
                                 <td>課稅金額</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item33}}
+                                    {{item14}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -296,7 +209,7 @@
                                 <td></td>
                                 <td>應發金額</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item34}}
+                                    {{item15}}
                                 </td>
                                 <td></td>
                             </tr>
@@ -304,7 +217,7 @@
                                 <td></td>
                                 <td>實發金額</td>
                                 <td style="font-family: 'Roboto', sans-serif;">
-                                    {{item35}}
+                                    {{item16}}
                                 </td>
                                 <td></td>
                             </tr>

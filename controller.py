@@ -147,20 +147,14 @@ class Controller:
         paltj = self.model_payslip.get_paltj(payPeriod, employee)
         list_paltj = paltj.values.tolist()
 
-        # 下面這段程式碼會先建立一個 10 * 3 的二維陣列 list1, 10 列中的每一列都會有 3 個元素, 每個元素分別代表[項目名稱, 項目金額, 正負值]
-        # 接下來使用一個迴圈將 list_paltj 的值帶入 list1 中, 這個步驟是為了讓 list_paltj 的項目在小於 10 比的狀況下仍能正常顯示
+        # 加扣項個別加總
         positive = 0
         negative = 0
-        list1 = [['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1], ['', 0, 1]]
         for i in range(len(list_paltj)):
-            if list_paltj[i][0] != '':
-                list1[i][0] = list_paltj[i][0]
-                list1[i][1] = list_paltj[i][1]
-                if list_paltj[i][2] < 0:
-                    list1[i][2] = -1
-                    negative += (list1[i][1] * list_paltj[i][2])
-                else:
-                    positive += list1[i][1]
+            if list_paltj[i][2] < 0:
+                negative += (list_paltj[i][1] * list_paltj[i][2])
+            else:
+                positive += list_paltj[i][1]
 
         year = payPeriod[0:4]
         month = payPeriod[4:6]
@@ -171,8 +165,8 @@ class Controller:
 
         # 薪資條的加扣項:
         # item1 ~ item7 為固定的薪資項目, 其項目數量和金額的正負值是不變的
-        # item8 ~ item27 為其他津貼扣款項目, 其項目的名稱、數量和金額的正負值都是變動的 (不同的員工, 項目的數量也會不同)
-        # item28 ~ item35 為出勤明細及相關金額總和
+        # item8 加扣款項目, 項目數量是變動的
+        # item9 ~ item16 為出勤明細及相關金額總和
         template_vars = {
             'payDate': (year + '/' + str(int(month) + 1) + '/' + '01'),
             'payPeriod': (year + '/' + month + '/01-' + year + '/' + month + '/30'),
@@ -188,34 +182,15 @@ class Controller:
             'item5': str(int(list_palti[0][8]) * -1),
             'item6': str(int(list_palti[0][9]) * -1),
             'item7': str(int(list_palti[0][18]) * -1),
-            'item8': str(list1[0][0]),
-            'item9': self.determine_zero(list1[0][0], list1[0][1], list1[0][2]),
-            'item10': str(list1[1][0]),
-            'item11': self.determine_zero(list1[1][0], list1[1][1], list1[1][2]),
-            'item12': str(list1[2][0]),
-            'item13': self.determine_zero(list1[2][0], list1[2][1], list1[2][2]),
-            'item14': str(list1[3][0]),
-            'item15': self.determine_zero(list1[3][0], list1[3][1], list1[3][2]),
-            'item16': str(list1[4][0]),
-            'item17': self.determine_zero(list1[4][0], list1[4][1], list1[4][2]),
-            'item18': str(list1[5][0]),
-            'item19': self.determine_zero(list1[5][0], list1[5][1], list1[5][2]),
-            'item20': str(list1[6][0]),
-            'item21': self.determine_zero(list1[6][0], list1[6][1], list1[6][2]),
-            'item22': str(list1[7][0]),
-            'item23': self.determine_zero(list1[7][0], list1[7][1], list1[7][2]),
-            'item24': str(list1[8][0]),
-            'item25': self.determine_zero(list1[8][0], list1[8][1], list1[8][2]),
-            'item26': str(list1[9][0]),
-            'item27': self.determine_zero(list1[9][0], list1[9][1], list1[9][2]),
-            'item28': str(list_palti[0][15]),
-            'item29': str(list_palti[0][16]),
-            'item30': str(int(list_palti[0][14])),
-            'item31': str(int(positive) + int(list_palti[0][4]) + int(list_palti[0][5]) + int(list_palti[0][6])),
-            'item32': str(int(negative) - int(list_palti[0][7]) - int(list_palti[0][8]) - int(list_palti[0][9]) - int(list_palti[0][18])),
-            'item33': str(int(list_palti[0][12])),
-            'item34': str(int(list_palti[0][10]) + int(list_palti[0][18])),
-            'item35': str(int(list_palti[0][11]))
+            'item8': paltj.T.to_dict(),
+            'item9': str(list_palti[0][15]),
+            'item10': str(list_palti[0][16]),
+            'item11': str(int(list_palti[0][14])),
+            'item12': str(int(positive) + int(list_palti[0][4]) + int(list_palti[0][5]) + int(list_palti[0][6])),
+            'item13': str(int(negative) - int(list_palti[0][7]) - int(list_palti[0][8]) - int(list_palti[0][9]) - int(list_palti[0][18])),
+            'item14': str(int(list_palti[0][12])),
+            'item15': str(int(list_palti[0][10]) + int(list_palti[0][18])),
+            'item16': str(int(list_palti[0][11]))
         }
 
         # Render the template into HTML
@@ -231,14 +206,6 @@ class Controller:
         # encryption
         password = str(list_profile[0][6]).strip()
         self.encrypt(fname, fname, password)
-
-    def determine_zero(self, value1, value2, value3):
-        value = value2
-        if value1 == '' and value2 == 0:
-            value = ''
-            return value
-        else:
-            return str(int(value * value3))
 
     def encrypt(self, input_pdf, output_pdf, password):
         pdf_writer = PdfFileWriter()
