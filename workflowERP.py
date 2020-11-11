@@ -36,61 +36,50 @@ class Payslip:
             config['database']['user_password']
         )
         self.conn = self.connection.conn
+
+        # logging connection info
         logger.info(self.connection.connectionInfo)
 
-        # employee list
-        self.employeeList = self.create_employeeList()
-        self.default_payPeriod_list = self.get_list_payPeriods()
-        self.default_department_list = self.get_list_departments(self.default_payPeriod_list[0])
-        self.default_employee_list = self.get_list_employees(self.default_payPeriod_list[0], '所有部門')
-
-# employeeList
-    def create_employeeList(self):
-        query_employeeList = (
-            'SELECT DISTINCT TI002, TI004, TI001 ' +
-            'FROM PALTI ' +
-            'ORDER BY \'TI002\' DESC'
-        )
-        return pd.read_sql(query_employeeList, self.conn)
+        # payslip list
+        self.payslipList = self.create_payslipList()
 
     def get_list_payPeriods(self):
-        return self.employeeList[self.employeeList.columns[0]].unique().tolist()
+        return self.payslipList[self.payslipList.columns[0]].unique().tolist()
 
     def get_list_departments(self, payPeriod):
-        df_departments = self.employeeList.query(
-            self.employeeList.columns[0] +
+        df_departments = self.payslipList.query(
+            self.payslipList.columns[0] +
             ' == \'' +
             payPeriod +
             '\''
         )
-        list_departments = df_departments[self.employeeList.columns[1]].unique().tolist()
+        list_departments = df_departments[self.payslipList.columns[1]].unique().tolist()
         list_departments.sort()
         return list_departments
 
     def get_list_employees(self, payPeriod, department):
         if department == '所有部門':
-            df_employees = self.employeeList.query(
-                self.employeeList.columns[0] +
+            df_employees = self.payslipList.query(
+                self.payslipList.columns[0] +
                 ' == \'' +
                 payPeriod +
                 '\''
             )
         else:
-            df_employees = self.employeeList.query(
-                self.employeeList.columns[0] +
+            df_employees = self.payslipList.query(
+                self.payslipList.columns[0] +
                 ' == \'' +
                 payPeriod +
                 '\' and ' +
-                self.employeeList.columns[1] +
+                self.payslipList.columns[1] +
                 ' == \'' +
                 department +
                 '\''
             )
-        list_employees = df_employees[self.employeeList.columns[2]].unique().tolist()
+        list_employees = df_employees[self.payslipList.columns[2]].unique().tolist()
         list_employees.sort()
         return list_employees
 
-# Payslip
     def get_profile(self, employee):
         query_profile = (
             'SELECT MV001, MV002, MV004, MV008, MV006, MV020, MV009 ' +
@@ -161,6 +150,14 @@ class Payslip:
             'ORDER BY MV001 ASC'
         )
         return pd.read_sql(query_email, self.conn)
+
+    def create_payslipList(self):
+        query_payslipList = (
+            'SELECT DISTINCT TI002, TI004, TI001 ' +
+            'FROM PALTI ' +
+            'ORDER BY \'TI002\' DESC'
+        )
+        return pd.read_sql(query_payslipList, self.conn)
 
     def create_emailList(self, payPeriod, department, employee):
         if employee == '所有員工':

@@ -129,9 +129,9 @@ def sender():
         return response
     else:
         # default value
-        payPeriods = payslip.default_payPeriod_list
-        departments = payslip.default_department_list
-        employees = payslip.default_employee_list
+        payPeriods = payslip.get_list_payPeriods()
+        departments = payslip.get_list_departments(payPeriods[0])
+        employees = payslip.get_list_employees(payPeriods[0], '所有部門')
         return render_template(
             'sender.html',
             payPeriods=payPeriods,
