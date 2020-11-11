@@ -9,7 +9,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
-from PyPDF2 import PdfFileWriter, PdfFileReader
 import pdf
 import pandas as pd
 
@@ -45,7 +44,7 @@ class Payslip:
         self.default_department_list = self.get_list_departments(self.default_payPeriod_list[0])
         self.default_employee_list = self.get_list_employees(self.default_payPeriod_list[0], '所有部門')
 
-# employee list
+# employeeList
     def create_employeeList(self):
         query_employeeList = (
             'SELECT DISTINCT TI002, TI004, TI001 ' +
@@ -91,7 +90,78 @@ class Payslip:
         list_employees.sort()
         return list_employees
 
-# payslip
+# Payslip
+    def get_profile(self, employee):
+        query_profile = (
+            'SELECT MV001, MV002, MV004, MV008, MV006, MV020, MV009 ' +
+            'FROM CMSMV ' +
+            'WHERE MV001 = \'' +
+            employee +
+            '\' ' +
+            'ORDER BY \'MV001\' DESC'
+            )
+        return pd.read_sql(query_profile, self.conn)
+
+    def get_palti(self, payPeriod, employee):
+        query_palti = (
+                'SELECT TI002 as \'發薪年月\', ' +
+                'TI004 AS \'部門\', ' +
+                'TI001 AS \'員工編號\', ' +
+                'TI023 + TI024 AS \'底薪\', ' +
+                'TI029 + TI030 AS \'全勤獎金\', ' +
+                'TI025 + TI026 AS \'加班費免稅\', ' +
+                'TI027 + TI028 AS \'加班費課稅\', ' +
+                'TI031 + TI032 AS \'請假扣款\', ' +
+                'TI033 AS \'健保費\', ' +
+                'TI034 AS \'勞保費\', ' +
+                'TI040 + TI041 + TI033 + TI034 AS \'應發金額\', ' +
+                'TI040 + TI041 AS \'實發金額\', ' +
+                'TI042 + TI043 AS \'課稅金額\', ' +
+                'TI027 + TI028 + TI044 + TI045 AS \'津貼合計\', ' +
+                'TI054 AS \'公司提繳\', ' +
+                'TI015 + TI016 AS \'出勤天數\', ' +
+                'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
+                'TI033 + TI034 AS \'扣款合計\', ' +
+                'TI035 + TI036 AS \'所得稅\' ' +
+                'FROM PALTI ' +
+                'where TI001 = ' +
+                '\'' +
+                employee +
+                '\' ' +
+                'and ' +
+                'TI002 = ' +
+                payPeriod +
+                ' ORDER BY \'員工編號\' ASC'
+            )
+        return pd.read_sql(query_palti, self.conn)
+
+    def get_paltj(self, payPeriod, employee):
+        query_paltj = (
+            'SELECT DISTINCT TJ004 AS \'津貼扣款名稱\', ' +
+            'TJ007 AS \'津貼扣款金額\', ' +
+            'TJ005 AS \'加扣項\' ' +
+            'FROM PALTJ ' +
+            'WHERE TJ001 = ' +
+            '\'' +
+            employee +
+            '\' ' +
+            'AND TJ002 = ' +
+            payPeriod
+        )
+        return pd.read_sql(query_paltj, self.conn)
+
+    def get_email(self, employee):
+        query_email = (
+            'SELECT MV020 ' +
+            'FROM CMSMV ' +
+            'where MV001 = ' +
+            '\'' +
+            employee +
+            '\' ' +
+            'ORDER BY MV001 ASC'
+        )
+        return pd.read_sql(query_email, self.conn)
+
     def create_emailList(self, payPeriod, department, employee):
         if employee == '所有員工':
             if department == '所有部門': 
@@ -135,16 +205,11 @@ class Payslip:
         list_paltj = paltj.values.tolist()
 
         # 加扣項個別加總
-        positive = 0
-        negative = 0
-        for i in range(len(list_paltj)):
-            if list_paltj[i][2] < 0:
-                negative += (list_paltj[i][1] * list_paltj[i][2])
-            else:
-                positive += list_paltj[i][1]
+        negative = paltj[paltj["加扣項"]<0]["津貼扣款金額"].sum()
+        positive = paltj[paltj["加扣項"]>0]["津貼扣款金額"].sum()
 
-        year = payPeriod[0:4]
-        month = payPeriod[4:6]
+        year = payPeriod[:4]
+        month = payPeriod[4:]
 
         # add variables into the templates context
         env = Environment(loader=FileSystemLoader('.'))
@@ -154,9 +219,11 @@ class Payslip:
         # item1 ~ item7 為固定的薪資項目, 其項目數量和金額的正負值是不變的
         # item8 加扣款項目, 項目數量是變動的
         # item9 ~ item16 為出勤明細及相關金額總和
+        year = int(year)
+        month = int(month) + 1
         template_vars = {
-            'payDate': (year + '/' + str(int(month) + 1) + '/' + '01'),
-            'payPeriod': (year + '/' + month + '/01-' + year + '/' + month + '/30'),
+            'payDate': f"{year}/{month}/01",
+            'payPeriod': f"{year}/{month}/01-{year}/{month}/30",
             'email': str(list_profile[0][5]),
             'employeeID': str(list_profile[0][0]),
             'name': str(list_profile[0][1]),
@@ -184,8 +251,7 @@ class Payslip:
         html_out = template.render(template_vars)
 
         # create file name
-        path = 'payslip\\'
-        fname = path + str(employee).strip() + '-' + payPeriod + '-薪資檔案' + '.pdf'
+        fname = 'payslip\\' + str(employee).strip() + '-' + payPeriod + '-薪資檔案' + '.pdf'
 
         # rendering html to pdf
         HTML(string=html_out).write_pdf(fname, stylesheets=['style.css'])
@@ -286,74 +352,3 @@ class Payslip:
             serverSMTP.quit()
             log += '\n結束'
             return log
-
-    def get_profile(self, employee):
-        query_profile = (
-            'SELECT MV001, MV002, MV004, MV008, MV006, MV020, MV009 ' +
-            'FROM CMSMV ' +
-            'WHERE MV001 = \'' +
-            employee +
-            '\' ' +
-            'ORDER BY \'MV001\' DESC'
-            )
-        return pd.read_sql(query_profile, self.conn)
-
-    def get_palti(self, payPeriod, employee):
-        query_palti = (
-                'SELECT TI002 as \'發薪年月\', ' +
-                'TI004 AS \'部門\', ' +
-                'TI001 AS \'員工編號\', ' +
-                'TI023 + TI024 AS \'底薪\', ' +
-                'TI029 + TI030 AS \'全勤獎金\', ' +
-                'TI025 + TI026 AS \'加班費免稅\', ' +
-                'TI027 + TI028 AS \'加班費課稅\', ' +
-                'TI031 + TI032 AS \'請假扣款\', ' +
-                'TI033 AS \'健保費\', ' +
-                'TI034 AS \'勞保費\', ' +
-                'TI040 + TI041 + TI033 + TI034 AS \'應發金額\', ' +
-                'TI040 + TI041 AS \'實發金額\', ' +
-                'TI042 + TI043 AS \'課稅金額\', ' +
-                'TI027 + TI028 + TI044 + TI045 AS \'津貼合計\', ' +
-                'TI054 AS \'公司提繳\', ' +
-                'TI015 + TI016 AS \'出勤天數\', ' +
-                'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
-                'TI033 + TI034 AS \'扣款合計\', ' +
-                'TI035 + TI036 AS \'所得稅\' ' +
-                'FROM PALTI ' +
-                'where TI001 = ' +
-                '\'' +
-                employee +
-                '\' ' +
-                'and ' +
-                'TI002 = ' +
-                payPeriod +
-                ' ORDER BY \'員工編號\' ASC'
-            )
-        return pd.read_sql(query_palti, self.conn)
-
-    def get_paltj(self, payPeriod, employee):
-        query_paltj = (
-            'SELECT DISTINCT TJ004 AS \'津貼扣款名稱\', ' +
-            'TJ007 AS \'津貼扣款金額\', ' +
-            'TJ005 AS \'加扣項\' ' +
-            'FROM PALTJ ' +
-            'WHERE TJ001 = ' +
-            '\'' +
-            employee +
-            '\' ' +
-            'AND TJ002 = ' +
-            payPeriod
-        )
-        return pd.read_sql(query_paltj, self.conn)
-
-    def get_email(self, employee):
-        query_email = (
-            'SELECT MV020 ' +
-            'FROM CMSMV ' +
-            'where MV001 = ' +
-            '\'' +
-            employee +
-            '\' ' +
-            'ORDER BY MV001 ASC'
-        )
-        return pd.read_sql(query_email, self.conn)
