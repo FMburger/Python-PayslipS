@@ -105,22 +105,22 @@ def logout():
 @app.route('/sender', methods=['GET', 'POST'])
 @login_required
 def sender():
-    import controller
-    controller = controller.Controller()
+    import workflowERP
+    payslip = workflowERP.Payslip()
 
     if request.method == 'POST':
         obj = request.get_json()
         if obj['num'] == 1:
-            result = controller.model_employeeList.get_list_departments(
+            result = payslip.get_list_departments(
                 obj['payPeriod']
             )
         elif obj['num'] == 2:
-            result = controller.model_employeeList.get_list_employees(
+            result = payslip.get_list_employees(
                 obj['payPeriod'],
                 obj['department']
             )
         elif obj['num'] == 3:
-            result = controller.email_payslip(obj['payPeriod'], obj['department'], obj['employee'])
+            result = payslip.email_payslip(obj['payPeriod'], obj['department'], obj['employee'])
         response = app.response_class(
             response=json.dumps(result),
             status=200,
@@ -129,9 +129,9 @@ def sender():
         return response
     else:
         # default value
-        payPeriods = controller.default_payPeriod_list
-        departments = controller.default_department_list
-        employees = controller.default_employee_list
+        payPeriods = payslip.default_payPeriod_list
+        departments = payslip.default_department_list
+        employees = payslip.default_employee_list
         return render_template(
             'sender.html',
             payPeriods=payPeriods,
