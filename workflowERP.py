@@ -210,7 +210,7 @@ class Payslip:
 
         # add variables into the templates context
         env = Environment(loader=FileSystemLoader('.'))
-        template = env.get_template('payslip.html')
+        template = env.get_template('templates/payslip.html')
 
         # 薪資條的加扣項:
         # item1 ~ item7 為固定的薪資項目, 其項目數量和金額的正負值是不變的
