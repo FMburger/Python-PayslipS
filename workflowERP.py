@@ -1,4 +1,4 @@
-import conn2MSSQL
+import mssql
 import csv
 import configparser
 import logging
@@ -29,7 +29,7 @@ logger = logging.getLogger()
 class Payslip:
     def __init__(self):
         # create database connection
-        self.connection = conn2MSSQL.Connection(
+        self.connection = mssql.Connection(
             config['database']['server_name'],
             config['database']['database'],
             config['database']['user_name'],
