@@ -109,7 +109,7 @@ class Payslip:
                 'TI027 + TI028 + TI044 + TI045 AS \'津貼合計\', ' +
                 'TI054 AS \'公司提繳\', ' +
                 'TI015 + TI016 AS \'出勤天數\', ' +
-                'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
+                'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI013 + TI014 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
                 'TI033 + TI034 AS \'扣款合計\', ' +
                 'TI035 + TI036 AS \'所得稅\' ' +
                 'FROM PALTI ' +
