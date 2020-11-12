@@ -251,7 +251,7 @@ class Payslip:
         fname = 'payslip\\' + str(employee).strip() + '-' + payPeriod + '-薪資檔案' + '.pdf'
 
         # rendering html to pdf
-        HTML(string=html_out).write_pdf(fname, stylesheets=['style.css'])
+        HTML(string=html_out).write_pdf(fname, stylesheets=['statics/style.css'])
 
         # encryption
         password = str(list_profile[0][6]).strip()
