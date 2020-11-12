@@ -14,7 +14,7 @@ import pandas as pd
 
 # config.init
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('../config.ini')
 
 # logging
 LOG_FORMAT = '%(asctime)s - %(levelname)s - %(message)s'

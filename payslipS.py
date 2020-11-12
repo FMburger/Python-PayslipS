@@ -11,7 +11,7 @@ import configparser
 
 # config.init
 config = configparser.ConfigParser()
-config.read('config.ini')
+config.read('../config.ini')
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -156,7 +156,7 @@ def setting():
         config['smtp']['user_name'] = obj['id']
         config['smtp']['user_password'] = obj['password']
         config['email']['email_content'] = obj['email_content']
-        with open('config.ini', 'w') as configfile:
+        with open('../config.ini', 'w') as configfile:
             config.write(configfile)
         result = '儲存成功'
         response = app.response_class(
