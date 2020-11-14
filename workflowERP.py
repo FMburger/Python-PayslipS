@@ -258,9 +258,10 @@ class Payslip:
         pdf.encrypt(fname, fname, password)
 
     def email_payslip(self, payPeriod, department, employee):
-        log = '  開始執行'
+        log = ''
         # check smtp connection
         try:
+            log += '  開始執行'
             serverSMTP = smtplib.SMTP(config['smtp']['smtp_host'], config['smtp']['smtp_port'])
             serverSMTP.starttls()
             serverSMTP.login(config['smtp']['user_name'], config['smtp']['user_password'])
@@ -276,11 +277,7 @@ class Payslip:
             log += smtp_status
 
             # get list of employees
-            list_employees = self.create_emailList(
-                payPeriod,
-                department,
-                employee
-            )
+            list_employees = self.create_emailList(payPeriod, department, employee)
             email_subject = payPeriod + '月份' + '薪資檔案'
             # email content
             email_body = config['email']['email_content']
