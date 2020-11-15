@@ -106,6 +106,7 @@ def logout():
 @login_required
 def sender():
     import workflowERP
+    import sender
     payslip = workflowERP.Payslip()
 
     if request.method == 'POST':
@@ -120,7 +121,9 @@ def sender():
                 obj['department']
             )
         elif obj['num'] == 3:
-            result = payslip.email_payslip(obj['payPeriod'], obj['department'], obj['employee'])
+            emailList = payslip.create_emailList(obj['payPeriod'], obj['department'], obj['employee'])
+            result = sender.send_email(emailList)
+
         response = app.response_class(
             response=json.dumps(result),
             status=200,
@@ -132,12 +135,7 @@ def sender():
         payPeriods = payslip.get_list_payPeriods()
         departments = payslip.get_list_departments(payPeriods[0])
         employees = payslip.get_list_employees(payPeriods[0], '所有部門')
-        return render_template(
-            'sender.html',
-            payPeriods=payPeriods,
-            departments=departments,
-            employees=employees
-        )
+        return render_template('sender.html', payPeriods=payPeriods, departments=departments, employees=employees)
 
 
 @app.route('/myPayslip')

@@ -4,11 +4,6 @@ import configparser
 import logging
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 import pdf
 import pandas as pd
 
@@ -93,35 +88,35 @@ class Payslip:
 
     def get_palti(self, payPeriod, employee):
         query_palti = (
-                'SELECT TI002 as \'發薪年月\', ' +
-                'TI004 AS \'部門\', ' +
-                'TI001 AS \'員工編號\', ' +
-                'TI023 + TI024 AS \'底薪\', ' +
-                'TI029 + TI030 AS \'全勤獎金\', ' +
-                'TI025 + TI026 AS \'加班費免稅\', ' +
-                'TI027 + TI028 AS \'加班費課稅\', ' +
-                'TI031 + TI032 AS \'請假扣款\', ' +
-                'TI033 AS \'健保費\', ' +
-                'TI034 AS \'勞保費\', ' +
-                'TI040 + TI041 + TI033 + TI034 AS \'應發金額\', ' +
-                'TI040 + TI041 AS \'實發金額\', ' +
-                'TI042 + TI043 AS \'課稅金額\', ' +
-                'TI027 + TI028 + TI044 + TI045 AS \'津貼合計\', ' +
-                'TI054 AS \'公司提繳\', ' +
-                'TI015 + TI016 AS \'出勤天數\', ' +
-                'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI013 + TI014 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
-                'TI033 + TI034 AS \'扣款合計\', ' +
-                'TI035 + TI036 AS \'所得稅\' ' +
-                'FROM PALTI ' +
-                'where TI001 = ' +
-                '\'' +
-                employee +
-                '\' ' +
-                'and ' +
-                'TI002 = ' +
-                payPeriod +
-                ' ORDER BY \'員工編號\' ASC'
-            )
+            'SELECT TI002 as \'發薪年月\', ' +
+            'TI004 AS \'部門\', ' +
+            'TI001 AS \'員工編號\', ' +
+            'TI023 + TI024 AS \'底薪\', ' +
+            'TI029 + TI030 AS \'全勤獎金\', ' +
+            'TI025 + TI026 AS \'加班費免稅\', ' +
+            'TI027 + TI028 AS \'加班費課稅\', ' +
+            'TI031 + TI032 AS \'請假扣款\', ' +
+            'TI033 AS \'健保費\', ' +
+            'TI034 AS \'勞保費\', ' +
+            'TI040 + TI041 + TI033 + TI034 AS \'應發金額\', ' +
+            'TI040 + TI041 AS \'實發金額\', ' +
+            'TI042 + TI043 AS \'課稅金額\', ' +
+            'TI027 + TI028 + TI044 + TI045 AS \'津貼合計\', ' +
+            'TI054 AS \'公司提繳\', ' +
+            'TI015 + TI016 AS \'出勤天數\', ' +
+            'TI007 + TI008 + TI009 + TI010 + TI011 + TI012 + TI013 + TI014 + TI062 + TI063 + TI064 + TI065 + TI066 + TI067 AS \'加班時數\', ' +
+            'TI033 + TI034 AS \'扣款合計\', ' +
+            'TI035 + TI036 AS \'所得稅\' ' +
+            'FROM PALTI ' +
+            'where TI001 = ' +
+            '\'' +
+            employee +
+            '\' ' +
+            'and ' +
+            'TI002 = ' +
+            payPeriod +
+            ' ORDER BY \'員工編號\' ASC'
+        )
         return pd.read_sql(query_palti, self.conn)
 
     def get_paltj(self, payPeriod, employee):
@@ -139,18 +134,6 @@ class Payslip:
         )
         return pd.read_sql(query_paltj, self.conn)
 
-    def get_email(self, employee):
-        query_email = (
-            'SELECT MV020 ' +
-            'FROM CMSMV ' +
-            'where MV001 = ' +
-            '\'' +
-            employee +
-            '\' ' +
-            'ORDER BY MV001 ASC'
-        )
-        return pd.read_sql(query_email, self.conn)
-
     def create_payslipList(self):
         query_payslipList = (
             'SELECT DISTINCT TI002, TI004, TI001 ' +
@@ -162,18 +145,18 @@ class Payslip:
     def create_emailList(self, payPeriod, department, employee):
         if employee == '所有員工':
             if department == '所有部門': 
-                query_employees = (
-                    'SELECT DISTINCT TI001 ' +
-                    'FROM PALTI ' +
+                query_emailList = (
+                    'SELECT TI002, TI004, TI001, MV020 ' +
+                    'FROM PALTI INNER JOIN CMSMV ON TI001 = MV001 ' +
                     'WHERE TI002 = \'' +
                     payPeriod +
                     '\' ' +
                     'ORDER BY \'TI001\' ASC'
                 )
             else:
-                query_employees = (
-                    'SELECT DISTINCT TI001 ' +
-                    'FROM PALTI ' +
+                query_emailList = (
+                    'SELECT TI002, TI004, TI001, MV020 ' +
+                    'FROM PALTI INNER JOIN CMSMV ON TI001 = MV001 ' +
                     'WHERE TI002 = \'' +
                     payPeriod +
                     '\' and TI004 = \'' +
@@ -182,16 +165,17 @@ class Payslip:
                     'ORDER BY \'TI001\' ASC'
                 )
         else:
-            query_employees = (
-                'SELECT DISTINCT TI001 ' +
-                'FROM PALTI ' +
-                'WHERE TI001 = \'' +
+            query_emailList = (
+                'SELECT TI002, TI004, TI001, MV020 ' +
+                'FROM PALTI INNER JOIN CMSMV ON TI001 = MV001 ' +
+                'WHERE TI002 = \'' +
+                payPeriod +
+                '\' and TI001 = \'' +
                 employee +
                 '\' ' +
                 'ORDER BY \'TI001\' ASC'
-            )
-        df_employees = pd.read_sql(query_employees, self.conn)
-        return df_employees['TI001'].tolist()
+            ) 
+        return pd.read_sql(query_emailList, self.conn)
 
     def create_payslip(self, payPeriod, employee):
         profile = self.get_profile(employee)
@@ -257,92 +241,5 @@ class Payslip:
         password = str(list_profile[0][6]).strip()
         pdf.encrypt(fname, fname, password)
 
-    def email_payslip(self, payPeriod, department, employee):
-        log = ''
-        # check smtp connection
-        try:
-            log += '  開始執行'
-            serverSMTP = smtplib.SMTP(config['smtp']['smtp_host'], config['smtp']['smtp_port'])
-            serverSMTP.starttls()
-            serverSMTP.login(config['smtp']['user_name'], config['smtp']['user_password'])
-        except:
-            smtp_status = '\nSMTP Server 連線失敗。'
-            print(smtp_status)
-            logger.info(smtp_status)
-            log += smtp_status
-        else:
-            smtp_status = '\nSMTP Server 連線成功!'
-            print(smtp_status)
-            logger.info(smtp_status)
-            log += smtp_status
-
-            # get list of employees
-            list_employees = self.create_emailList(payPeriod, department, employee)
-            email_subject = payPeriod + '月份' + '薪資檔案'
-            # email content
-            email_body = config['email']['email_content']
-            for employee in list_employees:
-                self.create_payslip(payPeriod, employee)
-                employee = employee.rstrip()
-                email = self.get_email(employee)
-                str_email = email.to_string(index=False, header=False)
-                # Email header
-                sender_email = config['smtp']['user_name']
-                receiver_email = str_email
-                msg = MIMEMultipart()
-                msg['From'] = sender_email
-                msg['To'] = receiver_email
-                msg['Subject'] = email_subject
-                # Email content
-                msg.attach(MIMEText(email_body, 'plain', 'utf-8'))
-                fname = (
-                    'payslip\\' +
-                    employee +
-                    '-' +
-                    payPeriod +
-                    '-' +
-                    '薪資檔案.pdf'
-                )
-                attachment = open(fname, 'rb')
-
-                part = MIMEBase('application', 'octet-stream')
-                part.set_payload((attachment).read())
-                encoders.encode_base64(part)
-                part.add_header(
-                    'Content-Disposition',
-                    'attachment',
-                    filename=('gbk', '', fname)
-                )
-                msg.attach(part)
-                text = msg.as_string()
-
-                # Check whether the email exists
-                if receiver_email.rstrip() == '':
-                    msg = '員工' + employee + '無電子郵件資料, 請確實填寫'
-                    messagebox.showwarning('小提醒', message=msg)
-                    emaildata = '員工' + employee + '無電子郵件資料, 因此檔案傳送失敗'
-                    print(emaildata)
-                    logger.info(emaildata)
-                else:
-                    # Check whether email send success or not
-                    try:
-                        # send email
-                        serverSMTP.sendmail(
-                            sender_email,
-                            receiver_email,
-                            text
-                        )
-                    except:
-                        delivery_status = '\n電子郵件傳送失敗。'
-                        print(delivery_status)
-                        logger.info(delivery_status)
-                        log += delivery_status
-                    else:
-                        delivery_status = '\n電子郵件傳送成功。'
-                        print(delivery_status)
-                        logger.info(delivery_status)
-                        log += delivery_status
-        finally:
-            serverSMTP.quit()
-            log += '\n結束'
-            return log
+if __name__ == '__main__':
+    pass
