@@ -20,10 +20,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
-# emailList範例：
-#      | TI002 | TI004 | TI001     | MV020
-#   ---┼-------┼-------┼-----------┼---------------------   
-#     0| 202007| 15010 | 106005    | willard_kang@grobest.com
+# emailList 資料範例：
+#      | TI002(支薪期間) | TI004 (部門編號) | TI001(工號)| MV020(電子郵件)
+#   ---┼--------------- ┼----- -----------┼-----------┼---------------------   
+#     0| 202007         | 15010           | 106005    | willard_kang@grobest.com
 def send_email(emailList):
         log = ''
         # check smtp connection
