@@ -5,7 +5,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 import configparser
 import logging
-import workflowERP
+import erp
 
 # config.init
 config = configparser.ConfigParser()
@@ -50,7 +50,7 @@ def send_email(emailList):
             email_subject = payPeriod[:4] + '年' + payPeriod[4:] + '月份' + '薪資檔案'
             email_body = config['email']['email_content']
 
-            payslip = workflowERP.Payslip()
+            payslip = erp.Payslip()
 
             for employee in emailList[emailList.columns[2]]:
                 payslip.create_payslip(emailList.iat[0,0], employee)
