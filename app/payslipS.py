@@ -105,9 +105,9 @@ def logout():
 @app.route('/sender', methods=['GET', 'POST'])
 @login_required
 def sender():
-    import workflowERP
+    import erp
     import sender
-    payslip = workflowERP.Payslip()
+    payslip = erp.Payslip()
 
     if request.method == 'POST':
         obj = request.get_json()
