@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+        <html lang="zh-Hant-TW">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+        </head>
+        <body>
+            <div id="payslip">
+                <div id="title">全興飼料股份有限公司</div>
+                <div id="name">員工薪資單</div>
+                <div id="scope">
+                    <div class="left">
+                        <h3>支薪日期</h3>
+                        <p>
+                            {{payDate}}
+                        </p>
+                    </div>
+                    <div class="right">
+                        <h3>支薪期間</h3>
+                        <p>
+                            {{payPeriod}}
+                        </p>
+                    </div>
+                </div>
+                <div id="content">
+                    <div class="left">
+                        <div id="email">
+                            <div class="name">電子郵件</div>
+                            <div class="email">
+                                {{email}}
+                            </div>
+                        </div>
+                        <div id="detail">
+                            <div class="left">
+                                <p>員工代號</p>
+                                <p>姓名</p>
+                                <p>部門</p>
+                                <p>生日</p>
+                            </div>
+                            <div class="right">
+                                <p>
+                                    {{employeeID}}
+                                </p>
+                                <p>
+                                    {{name}}
+                                </p>
+                                <p>
+                                    {{department}}
+                                </p>
+                                <p>
+                                    {{dateOfBirth}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <table>
+                            <tr>
+                                <th></th>
+                                <th>項目</th>
+                                <th>金額</th>
+                                <th>備註</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>底(本)薪</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item1}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>全勤獎金</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item2}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>津貼及扣款</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>加班費</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item3}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>請假扣款</td>
+                                <td style="font-family: 'Roboto', sans-serif; ">
+                                    {{item4}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>健保費</td>
+                                <td style="font-family: 'Roboto', sans-serif; ">
+                                    {{item5}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>勞保費</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item6}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>所得稅</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item7}}
+
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>員工提領</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    0
+                                </td>
+                                <td></td>
+                            </tr>
+                            <!-- 加扣款項目 -->
+                            {% for key, value in item8.items()  %}
+                                <tr>
+                                    <td></td>
+                                    <td >
+                                        {{value['津貼扣款名稱']}}
+                                    </td>
+                                    <td style="font-family: 'Roboto', sans-serif;" >
+                                        {{value['津貼扣款金額'] * value['加扣項']}}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td>出勤</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>出勤天數</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item9}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>加班時數</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item10}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="text-align: left; background-color: rgb(230, 223, 223); padding-left: 33px;">
+                                    合計
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>公司提繳</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item11}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>津貼合計</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item12}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>扣款合計</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item13}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>課稅金額</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item14}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>應發金額</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item15}}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>實發金額</td>
+                                <td style="font-family: 'Roboto', sans-serif;">
+                                    {{item16}}
+                                </td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
