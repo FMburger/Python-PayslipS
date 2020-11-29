@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML
 import pdf
 import pandas as pd
+import calendar
 
 # config.init
 config = configparser.ConfigParser()
@@ -201,10 +202,10 @@ class Payslip:
         # item8 加扣款項目, 項目數量是變動的
         # item9 ~ item16 為出勤明細及相關金額總和
         year = int(year)
-        month = int(month) + 1
+        month = int(month)
         template_vars = {
-            'payDate': f"{year}/{month}/01",
-            'payPeriod': f"{year}/{month}/01-{year}/{month}/30",
+            'payDate': f"{year}/{month + 1}/05",
+            'payPeriod': f"{year}/{month}/01-{year}/{month}/{calendar.monthrange(year, month)[1]}",
             'email': str(list_profile[0][5]),
             'employeeID': str(list_profile[0][0]),
             'name': str(list_profile[0][1]),
