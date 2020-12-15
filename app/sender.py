@@ -23,7 +23,7 @@ logger = logging.getLogger()
 # emailList 資料範例：
 #      | TI002(支薪期間) | TI004 (部門編號) | TI001(工號)| MV020(電子郵件)
 #   ---┼--------------- ┼----- -----------┼-----------┼---------------------   
-#     0| 202007         | 15010           | 106005    | willard_kang@grobest.com
+#     0| 202007         | 15010           | 106005    | XXX@XXXXXX.com
 def send_email(emailList):
         log = ''
         # check smtp connection
